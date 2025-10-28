@@ -50,11 +50,14 @@ class CalculatorViewModel : ViewModel(){
     }
 
     private fun enterOperator(operator: String) {
+        if (number1.isNotBlank() && this.operator != null) {
+            performCalculation()
+        }
         if (number1.isNotBlank()) {
             this.operator = operator
         }
-
     }
+
 
     private fun clearLast() {
         if(operator == null) {
@@ -97,13 +100,21 @@ class CalculatorViewModel : ViewModel(){
                 "÷" -> if (num2 != 0.0) num1 / num2 else Double.NaN
                 else -> 0.0
             }
-            clearAll()
-            val resultString = if (result.isNaN())
+            val resultString = if (result.isNaN()) {
                 "Error :("
-            else result.toString().removeSuffix("0")
+            } else {
+                result.toString()
+                    .removeSuffix(".0")
+            }
+            state = state.copy(display = resultString)
+            if(result.isNaN()){
+                number1 = "" }
+            else{
 
-            number1 = if(result.isNaN()) "" else resultString
-            state = state.copy(resultString)
+                number1 = resultString
+            }
+            number2 = ""
+            operator = null
         }
     }
 
